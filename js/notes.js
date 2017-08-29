@@ -56,12 +56,14 @@ domCreateNoteSelectors(notes, selectedNote);
 domUpdateNoteEditor(selectedNote);
 
 $('.note-selectors').on('click', '.note-selector', function() {
+  $('.note-editor').show();
   $('.note-selector').removeClass('active');
   $(this).addClass('active');
   domUpdateNoteEditor($(this).data());
 });
 
 $('.note-editor-input').on('input propertychange', function(event) {
+  $('.note-editor').show();
   var body = $(this).val();
   var timestamp = Date.now();
   $('.note-selector.active').data('body', body);
@@ -74,6 +76,7 @@ $('.note-editor-input').on('input propertychange', function(event) {
 });
 
 $('.toolbar-button-new').on('click', function() {
+  $('.note-editor').show();
   $('.note-selector').removeClass('active');
   var note = {
     id: Date.now(),
@@ -83,4 +86,16 @@ $('.toolbar-button-new').on('click', function() {
   var $noteSelector = createNoteSelector(note, note);
   $('.note-selectors').prepend($noteSelector);
   domUpdateNoteEditor(note);
+});
+
+$('.toolbar-button-delete').on('click', function() {
+  $('.note-selector.active').remove();
+  var children = $('.note-selectors').children();
+  if (children.length > 0) {
+    var $noteSelector = $(children[0]);
+    $noteSelector.addClass('active');
+    domUpdateNoteEditor($noteSelector.data());
+  } else {
+    $('.note-editor').hide();
+  }
 });
