@@ -56,18 +56,6 @@ function domSelectDefaultChild() {
   }
 }
 
-var notes = [
-  {id: 1, body: "This is a first test", timestamp: Date.now()},
-  {id: 2, body: "This is a second test", timestamp: Date.now()},
-  {id: 3, body: "This is a third test", timestamp: Date.now()}
-];
-
-var selectedNote = notes[0];
-
-domCreateNoteSelectors(notes, selectedNote);
-
-domUpdateNoteEditor(selectedNote);
-
 $('.note-selectors').on('click', '.note-selector', function() {
   $('.note-editor').show();
   $('.note-selector').removeClass('active');
@@ -122,3 +110,12 @@ $('.toolbar-search').on('input propertychange', function() {
   });
   domSelectDefaultChild();
 });
+
+var notes = [
+  {id: 1, body: "This is a first test", timestamp: Date.now()},
+  {id: 2, body: "This is a second test", timestamp: Date.now()},
+  {id: 3, body: "This is a third test", timestamp: Date.now()}
+];
+var selectedNote = notes[0];
+domCreateNoteSelectors(notes, selectedNote);
+domUpdateNoteEditor(selectedNote);
