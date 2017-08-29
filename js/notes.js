@@ -55,3 +55,15 @@ $('.note-selector').on('click', function() {
   $(this).addClass('active');
   domUpdateNoteEditor($(this).data());
 });
+
+$('.note-editor-input').on('input propertychange', function(event) {
+  var body = $(this).val();
+  var timestamp = Date.now();
+  $('.note-selector.active').data('body', body);
+  $('.note-selector.active').data('timestamp', timestamp);
+  $('.note-selector.active .note-selector-title').html(formatTitle(body));
+  $('.note-selector.active .note-selector-timestamp').html(formatTimestamp(timestamp));
+  $('.note-editor-info').html(formatTimestamp(timestamp));
+  var $active = $('.note-selector.active').detach();
+  $('.note-selectors').prepend($active);
+});
