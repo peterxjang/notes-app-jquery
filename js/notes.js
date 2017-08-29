@@ -20,15 +20,20 @@ function formatTimestamp(timestamp) {
   return new Date(timestamp).toUTCString();
 }
 
+function createNoteSelector(note, selectedNote) {
+  var $noteSelector = $(
+    '<div class="note-selector' + (note === selectedNote ? ' active' : '') + '">' +
+      '<p class="note-selector-title">' + formatTitle(note.body) + '</p>' +
+      '<p class="note-selector-timestamp">' + formatTimestamp(note.timestamp) + '</p>' +
+    '</div>'
+  );
+  $noteSelector.data(note);
+  return $noteSelector;
+}
+
 function domCreateNoteSelectors(notes, selectedNote) {
   transformNotes(notes).forEach(function(note) {
-    var $noteSelector = $(
-      '<div class="note-selector' + (note === selectedNote ? ' active' : '') + '">' +
-        '<p class="note-selector-title">' + formatTitle(note.body) + '</p>' +
-        '<p class="note-selector-timestamp">' + formatTimestamp(note.timestamp) + '</p>' +
-      '</div>'
-    );
-    $noteSelector.data(note);
+    var $noteSelector = createNoteSelector(note, selectedNote);
     $('.note-selectors').append($noteSelector);
   });
 }
@@ -50,7 +55,7 @@ domCreateNoteSelectors(notes, selectedNote);
 
 domUpdateNoteEditor(selectedNote);
 
-$('.note-selector').on('click', function() {
+$('.note-selectors').on('click', '.note-selector', function() {
   $('.note-selector').removeClass('active');
   $(this).addClass('active');
   domUpdateNoteEditor($(this).data());
@@ -66,4 +71,16 @@ $('.note-editor-input').on('input propertychange', function(event) {
   $('.note-editor-info').html(formatTimestamp(timestamp));
   var $active = $('.note-selector.active').detach();
   $('.note-selectors').prepend($active);
+});
+
+$('.toolbar-button-new').on('click', function() {
+  $('.note-selector').removeClass('active');
+  var note = {
+    id: Date.now(),
+    body: "",
+    timestamp: Date.now()
+  };
+  var $noteSelector = createNoteSelector(note, note);
+  $('.note-selectors').prepend($noteSelector);
+  domUpdateNoteEditor(note);
 });
