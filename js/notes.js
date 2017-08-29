@@ -20,18 +20,38 @@ function formatTimestamp(timestamp) {
   return new Date(timestamp).toUTCString();
 }
 
+function domCreateNoteSelectors(notes, selectedNote) {
+  transformNotes(notes).forEach(function(note) {
+    var $noteSelector = $(
+      '<div class="note-selector' + (note === selectedNote ? ' active' : '') + '">' +
+        '<p class="note-selector-title">' + formatTitle(note.body) + '</p>' +
+        '<p class="note-selector-timestamp">' + formatTimestamp(note.timestamp) + '</p>' +
+      '</div>'
+    );
+    $noteSelector.data(note);
+    $('.note-selectors').append($noteSelector);
+  });
+}
+
+function domUpdateNoteEditor(selectedNote) {
+  $('.note-editor-info').html(formatTimestamp(selectedNote.timestamp));
+  $('.note-editor-input').val(selectedNote.body);
+}
+
 var notes = [
   {id: 1, body: "This is a first test", timestamp: Date.now()},
   {id: 2, body: "This is a second test", timestamp: Date.now()},
   {id: 3, body: "This is a third test", timestamp: Date.now()}
 ];
 
-transformNotes(notes).forEach(function(note) {
-  console.log(note);
-  $('.note-selectors').append(
-    '<div class="note-selector">' +
-      '<p class="note-selector-title">' + formatTitle(note.body) + '</p>' +
-      '<p class="note-selector-timestamp">' + formatTimestamp(note.timestamp) + '</p>' +
-    '</div>'
-  );
+var selectedNote = notes[0];
+
+domCreateNoteSelectors(notes, selectedNote);
+
+domUpdateNoteEditor(selectedNote);
+
+$('.note-selector').on('click', function() {
+  $('.note-selector').removeClass('active');
+  $(this).addClass('active');
+  domUpdateNoteEditor($(this).data());
 });
