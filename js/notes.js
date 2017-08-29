@@ -43,6 +43,19 @@ function domUpdateNoteEditor(selectedNote) {
   $('.note-editor-input').val(selectedNote.body);
 }
 
+function domSelectDefaultChild() {
+  var children = $('.note-selector:visible');
+  if (children.length > 0) {
+    var $noteSelector = $(children[0]);
+    if ($('.note-selector.active').length === 0) {
+      $noteSelector.addClass('active');
+      domUpdateNoteEditor($noteSelector.data());
+    }
+  } else {
+    $('.note-editor').hide();
+  }
+}
+
 var notes = [
   {id: 1, body: "This is a first test", timestamp: Date.now()},
   {id: 2, body: "This is a second test", timestamp: Date.now()},
@@ -90,12 +103,22 @@ $('.toolbar-button-new').on('click', function() {
 
 $('.toolbar-button-delete').on('click', function() {
   $('.note-selector.active').remove();
-  var children = $('.note-selectors').children();
-  if (children.length > 0) {
-    var $noteSelector = $(children[0]);
-    $noteSelector.addClass('active');
-    domUpdateNoteEditor($noteSelector.data());
-  } else {
-    $('.note-editor').hide();
-  }
+  domSelectDefaultChild();
+});
+
+$('.toolbar-search').on('input propertychange', function() {
+  $('.note-editor').show();
+  var searchNoteText = $(this).val();
+  $('.note-selector').each(function() {
+    var $note = $(this);
+    if ($note.data().body.toLowerCase().indexOf(searchNoteText.toLowerCase()) === -1) {
+      $note.hide();
+      if ($note.hasClass('active')) {
+        $note.removeClass('active');
+      }
+    } else {
+      $note.show();
+    }
+  });
+  domSelectDefaultChild();
 });
